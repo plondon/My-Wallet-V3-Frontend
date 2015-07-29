@@ -22,31 +22,6 @@ walletApp.controller "RecoveryCtrl", ($scope, Wallet, $state, $translate) ->
       $scope.recoveryPassphrase = null
       $scope.showRecoveryPhrase = false
 
-  $scope.importRecoveryPhrase = () ->
-    $scope.editMnemonic = true
-
-  $scope.performImport = () ->
-
-    success = () ->
-      $scope.importing = false
-      $scope.editMnemonic = false
-      $scope.mnemonic = null
-      $state.go("wallet.common.transactions", accountIndex: "accounts")
-      Wallet.displaySuccess("Successfully imported seed")
-
-    error = (message) ->
-      $scope.importing = false
-      Wallet.displayError(message)
-      
-    cancel = () ->
-      $scope.importing = false
-
-    if confirm("You will lose all your bitcoins! Are you sure?")
-      $scope.importing = true
-      Wallet.importWithMnemonic($scope.mnemonic, $scope.passphrase, success, error, cancel)
-
-    return
-
   $scope.doNotCopyPaste = (event) ->
     event.preventDefault()
     $translate("DO_NOT_COPY_PASTE").then (translation) ->
