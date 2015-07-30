@@ -56,6 +56,14 @@ walletApp.config ($stateProvider, $urlRouterProvider) ->
   .state("wallet.common",
     views: commonViews
   )
+  .state("recover",
+    views: {
+      body: {
+        templateUrl: "partials/recover.jade"
+        controller: "RecoverCtrl"
+      }
+    }
+  )
   .state("login",
     views: {
       body: {

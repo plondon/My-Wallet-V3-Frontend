@@ -106,6 +106,9 @@ walletApp.controller "LoginCtrl", ($scope, $rootScope, $log, $http, Wallet, $coo
     if $scope.savePassword && $scope.password? && $scope.password != ""
        $cookieStore.put("password", $scope.password)
 
+  $scope.recover = () ->
+    $state.go "recover"
+
   $scope.resend = () ->
     if Wallet.settings.twoFactorMethod == 5
       $scope.resending = true

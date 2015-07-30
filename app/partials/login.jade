@@ -69,6 +69,8 @@
             p.form-control-static(ng-show="settings.twoFactorMethod == 5")
               img(ng-show="resending" src="img/spinner.gif")
               a(ng-click="resend()", ng-show="!resending", translate="RESEND") 
+        .form-group
+          a(translate="UNABLE_TO_LOGIN", ng-click="recover()")
         .mtl.flex-center.flex-end
           button.button-primary(ui-ladda="{{ busy }}", ng-click="login()", data-style="expand-left", ladda-translate="SIGNIN", ng-disabled="!isValid")
 

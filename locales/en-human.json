@@ -551,6 +551,9 @@
   "ACTIVITY_3_DESC": "Created wallet!",
   "ALT_EMPTY_MSG": "You don't have any bitcoin yet! Once you receive some bitcoins, we'll chart your account balances here.",
   "SIGNIN": "Sign in",
-  "SIGNOUT": "Sign out"
-
+  "SIGNOUT": "Sign out",
+  "UNABLE_TO_LOGIN" : "Unable to login?",
+  "RECOVER_WALLET" : "Recover your wallet",
+  "RECOVER_WALLET_EXPLAIN" : "If you wrote down your security phrase, enter it below to restore your wallet. Please choose a new password and be sure to remember it. This only works for wallets created since August 2015.",
+  "RECOVERY_SUCCESS" : "Successfully recovered your wallet. Don't forget your wallet identifier and password!"
 }
