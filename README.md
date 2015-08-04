@@ -10,7 +10,7 @@ Some NodeJS components need to be installed system wide:
 
 ```sh
 npm install -g grunt-cli coffee-script http-server bower
-```	
+```
 
 You also need Sass (use `sudo` if you're not using a [Ruby version manager](https://rvm.io)):
 
@@ -19,7 +19,7 @@ gem install sass
 ```
 
 ```sh
-git clone https://github.com/blockchain/My-Wallet-HD-Frontend.git 
+git clone https://github.com/blockchain/My-Wallet-HD-Frontend.git
 cd My-Wallet-HD-Frontend
 npm install
 ```
@@ -40,11 +40,11 @@ cd ~/path/to/My-Wallet-HD-Frontend
 ```
 
 Grunt compiles the view templates and CSS. Keep it running:
-    
+
     grunt
 
 Run the server:
-```sh 
+```sh
 npm start
 ```
 
@@ -67,13 +67,22 @@ cp betakeys-template.MDF betakeys.MDF
 You should see a number of example users at:
 http://local.blockchain.com:8080/betaadmin/
 
+## Using meta data storage locally
+
+Install the meta data server.
+
+Add the following to `.env`:
+`META_DATA_ENDPOINT=http://local.blockchain.com:8081/`
+
+This will not work if you run the distribution server, see below.
+
 ## Usage
 
 You can open any wallet registered with your email address. It will ask you to upgrade to HD if needed.
 
 You can also sign up for a new wallet. In that case you should use a valid email address. In the final registration step you need to enter the 5 letter code from the registration email (do not click the link).
 
-After login, you'll see a list of accounts. There will be delay before transactions and the correct balances show up. If something goes wrong during the login process, error messages appear in the console. 
+After login, you'll see a list of accounts. There will be delay before transactions and the correct balances show up. If something goes wrong during the login process, error messages appear in the console.
 
 The first time you login your browser needs to be verified. There's no UI for this yet, but you will receive an email with an approval link; once you click that login should proceed as normal.
 
@@ -172,7 +181,7 @@ Alternatively use `grunt dist_unsafe` without Github credentials.
 
 You can test the resulting files by setting `DIST=1` in `.env` and restarting the server.
 
-Deploy to staging 
+Deploy to staging
 
     grunt deploy_to_staging
 

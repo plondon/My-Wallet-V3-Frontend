@@ -22,6 +22,7 @@ modules = [
   "myWalletSpenderServices"
   "myBlockchainApiServices"
   "myBlockchainSettingsServices"
+  "myMetaDataServices"
 
   "ui.select"
   "ngAudio"

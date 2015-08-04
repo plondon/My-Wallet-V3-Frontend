@@ -19,7 +19,7 @@ playSound = (id) ->
 ##################################
 
 walletServices = angular.module("walletServices", [])
-walletServices.factory "Wallet", ($log, $http, $window, $timeout, MyWallet, MyBlockchainApi, MyBlockchainSettings, MyWalletStore, MyWalletSpender, $rootScope, ngAudio, $cookieStore, $translate, $filter, $state, $q) ->
+walletServices.factory "Wallet", ($log, $http, $window, $timeout, MyWallet, MyBlockchainApi, MyBlockchainSettings, MyMetaData, MyWalletStore, MyWalletSpender, $rootScope, ngAudio, $cookieStore, $translate, $filter, $state, $q) ->
   wallet = {
     goal: {auth: false},
     status: {isLoggedIn: false, didUpgradeToHd: null, didInitializeHD: false, didLoadSettings: false, didLoadTransactions: false, didLoadBalances: false, didConfirmRecoveryPhrase: false},
@@ -39,6 +39,7 @@ walletServices.factory "Wallet", ($log, $http, $window, $timeout, MyWallet, MyBl
   wallet.store = MyWalletStore
   wallet.spender = MyWalletSpender
   wallet.api = MyBlockchainApi
+  wallet.metaData = MyMetaData
   wallet.transactions = []
   wallet.languages = []
   wallet.currencies = []
@@ -46,6 +47,9 @@ walletServices.factory "Wallet", ($log, $http, $window, $timeout, MyWallet, MyBl
   wallet.api_code = '1770d5d9-bcea-4d28-ad21-6cbd5be018a8'
 
   wallet.store.setAPICode(wallet.api_code)
+
+  if $rootScope.metaDataEndPoint?
+    wallet.metaData.setEndpoint($rootScope.metaDataEndPoint)
 
   ##################################
   #             Public             #

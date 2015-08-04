@@ -1,5 +1,5 @@
 doctype
-<!-- @if !PRODUCTION --><html lang='en' ng-app='walletApp' ng-init="savePassword=#{ process.env.SAVE_PASSWORD || false }; beta=#{ process.env.BETA || false }" ng-csp><!-- @endif -->
+<!-- @if !PRODUCTION --><html lang='en' ng-app='walletApp' ng-init="savePassword=#{ process.env.SAVE_PASSWORD || false }; beta=#{ process.env.BETA || false }; metaDataEndPoint='#{ process.env.META_DATA_ENDPOINT }';" ng-csp><!-- @endif -->
 <!-- @if PRODUCTION && !BETA !><html lang='en' ng-app='walletApp' ng-init='beta=0' ng-csp><!-- @endif -->
 <!-- @if PRODUCTION && BETA !><html lang='en' ng-app='walletApp' ng-init='beta=1' ng-csp><!-- @endif -->
 head
@@ -67,6 +67,8 @@ head
   script(src='build/js/wrappers/my_wallet_spender.js')
   script(src='build/js/wrappers/my_wallet_store.js')
   script(src='build/js/wrappers/my_wallet.js')
+  script(src='build/js/wrappers/my_meta_data.js')
+
   
   script(src='build/js/app.js')
   script(src='build/js/translations.js')
