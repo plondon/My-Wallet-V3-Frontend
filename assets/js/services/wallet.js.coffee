@@ -118,6 +118,16 @@ walletServices.factory "Wallet", ($log, $http, $window, $timeout, MyWallet, MyBl
       wallet.applyIfNeeded()
     )
 
+    if wallet.my.wallet.metaDataKey?
+      # Get other meta data:
+      wallet.metaData.getSeenDidYouKnows(
+        (res) ->
+          console.log "Did you know? These have already been seen:"
+          console.log res
+          # Mark "did you know" item 4 as seen:
+          wallet.metaData.seenDidYouKnow(4)
+      )
+
     if successCallback?
       successCallback()
 
