@@ -4,36 +4,36 @@ walletApp.controller "RecoverCtrl", ($scope, $log, Wallet, $translate, $cookieSt
   $scope.success =  {mnemonic: null, password: null, confirmation: null}
   $scope.working = false
   $scope.isValidMnemonic = Wallet.isValidBIP39Mnemonic
-  
+
   $scope.recover = () ->
     $scope.working = true
-    
+
     success = (uid) ->
       $scope.working = false
       $cookieStore.put("uid", uid)
-      $state.go("wallet.common.dashboard")
-      
+      $state.go("wallet.common.home")
+
     error = () ->
       $scope.working = false
-    
+
     Wallet.recover($scope.fields.mnemonic, $scope.fields.password, success, error)
-    
+
   $scope.validate = (visual=true) ->
     $scope.isValid = true
-    
-    if $scope.form 
+
+    if $scope.form
       if $scope.isValidMnemonic($scope.fields.mnemonic)
         $scope.success.mnemonic = true
       else
         $scope.isValid = false
         $translate("INVALID_RECOVERY").then (translation) ->
           $scope.errors.mnemonic =  translation
-          
+
     if $scope.fields.password == ""
       $scope.isValid = false
       return
-          
-    if $scope.form && $scope.form.$error     
+
+    if $scope.form && $scope.form.$error
       if $scope.form.$error.minEntropy
         $scope.isValid = false
         $translate("TOO_WEAK").then (translation) ->
@@ -42,7 +42,7 @@ walletApp.controller "RecoverCtrl", ($scope, $log, Wallet, $translate, $cookieSt
         $scope.isValid = false
         $translate("TOO_LONG").then (translation) ->
           $scope.errors.password =  translation
-          
+
     if $scope.fields.confirmation == ""
       $scope.isValid = false
     else
@@ -53,4 +53,3 @@ walletApp.controller "RecoverCtrl", ($scope, $log, Wallet, $translate, $cookieSt
         if visual
           $translate("NO_MATCH").then (translation) ->
             $scope.errors.confirmation = translation
-    

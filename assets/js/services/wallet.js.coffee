@@ -83,6 +83,7 @@ walletServices.factory "Wallet", ($log, $http, $window, $timeout, MyWallet, MyBl
       wallet.settings.rememberTwoFactor = !result.never_save_auth_type
       wallet.settings.needs2FA = result.auth_type != 0
       wallet.settings.twoFactorMethod = result.auth_type
+      wallet.settings.loggingLevel = result.logging_level
       wallet.user.email = result.email
       wallet.user.current_ip = result.my_ip
       wallet.status.currentCountryDialCode = result.dial_code
@@ -104,64 +105,11 @@ walletServices.factory "Wallet", ($log, $http, $window, $timeout, MyWallet, MyBl
       wallet.settings.displayCurrency = wallet.settings.btcCurrency
       wallet.settings.feePolicy = wallet.my.wallet.fee_policy
       wallet.settings.blockTOR = !!result.block_tor_ips
+      wallet.status.didLoadSettings = true
 
       # Fetch transactions:
       if wallet.my.wallet.isUpgradedToHD
-        wallet.status.didConfirmRecoveryPhrase = wallet.my.wallet.hdwallet.isMnemonicVerified
-
-      wallet.user.uid = uid
-
-      # I (jaume) should use address book directly from the wallet object, not copy it
-      # for address, label of wallet.store.getAddressBook()
-      #   wallet.addressBook[address] = label
-
-      wallet.settings.secondPassword = wallet.my.wallet.isDoubleEncrypted
-      # todo: jaume: implement pbkdf2 iterations out of walletstore in mywallet
-      wallet.settings.pbkdf2 = wallet.my.wallet.pbkdf2_iterations;
-      # todo: jaume: implement logout time in mywallet
-      wallet.settings.logoutTimeMinutes = wallet.my.wallet.logoutTime / 60000
-
-      if wallet.my.wallet.isUpgradedToHD and not wallet.status.didInitializeHD
-        wallet.status.didInitializeHD = true
-
-      # Get email address, etc
-      # console.log "Getting info..."
-      wallet.settings_api.get_account_info((result)->
-        # console.log result
-        $window.name = "blockchain-"  + result.guid
-        wallet.settings.ipWhitelist = result.ip_lock || ""
-        wallet.settings.restrictToWhitelist = result.ip_lock_on
-        wallet.settings.apiAccess = result.is_api_access_enabled
-        wallet.settings.rememberTwoFactor = !result.never_save_auth_type
-        wallet.settings.needs2FA = result.auth_type != 0
-        wallet.settings.twoFactorMethod = result.auth_type
-        wallet.settings.loggingLevel = result.logging_level
-        wallet.user.email = result.email
-        wallet.user.current_ip = result.my_ip
-        wallet.status.currentCountryDialCode = result.dial_code
-        wallet.status.currentCountryCode = result.country_code
-        if result.sms_number
-           wallet.user.mobile = {country: result.sms_number.split(" ")[0], number: result.sms_number.split(" ")[1]}
-        else # Field is not present if not entered
-          wallet.user.mobile = {country: "+1", number: ""}
-
-        wallet.user.isEmailVerified = result.email_verified
-        wallet.user.isMobileVerified = result.sms_verified
-        wallet.user.passwordHint = result.password_hint1 # Field not present if not entered
-
-        wallet.setLanguage($filter("getByProperty")("code", result.language, wallet.languages))
-
-        # Get currencies:
-        wallet.settings.currency = ($filter("getByProperty")("code", result.currency, wallet.currencies))
-        wallet.settings.btcCurrency = ($filter("getByProperty")("serverCode", result.btc_currency, wallet.btcCurrencies))
-        wallet.settings.displayCurrency = wallet.settings.btcCurrency
-        wallet.settings.feePolicy = wallet.my.wallet.fee_policy
-        wallet.settings.blockTOR = !!result.block_tor_ips
-        wallet.status.didLoadSettings = true
-
-        # Fetch transactions:
-        if wallet.my.wallet.isUpgradedToHD
-          wallet.my.getHistoryAndParseMultiAddressJSON()
+        wallet.my.getHistoryAndParseMultiAddressJSON()
 
       wallet.applyIfNeeded()
     )
@@ -172,8 +120,6 @@ walletServices.factory "Wallet", ($log, $http, $window, $timeout, MyWallet, MyBl
     wallet.applyIfNeeded()
 
   wallet.login = (uid, password, two_factor_code, needsTwoFactorCallback, successCallback, errorCallback) ->
-    didLogin = () ->
-      wallet.didLogin(uid, successCallback)
 
     needsTwoFactorCode = (method) ->
       wallet.displayWarning("Please enter your 2FA code")
@@ -221,6 +167,9 @@ walletServices.factory "Wallet", ($log, $http, $window, $timeout, MyWallet, MyBl
 
     betaCheckFinished = () ->
       $window.root = "https://blockchain.info/"
+
+      didLogin = () ->
+        wallet.didLogin(uid, successCallback)
 
       wallet.my.login(
         uid,
