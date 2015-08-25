@@ -69,10 +69,14 @@ http://local.blockchain.com:8080/betaadmin/
 
 ## Using meta data storage locally
 
-Install the meta data server.
+Install the meta data server:
+
+    npm install blockchain/service-encrypted-metadata.git
 
 Add the following to `.env`:
-`META_DATA_ENDPOINT=http://local.blockchain.com:8081/`
+
+    META=1
+    META_DATA_ENDPOINT=http://local.blockchain.com:8080/meta
 
 This will not work if you run the distribution server, see below.
 

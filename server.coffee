@@ -25,6 +25,8 @@ port = process.env.PORT or 8080
 
 dist = process.env.DIST? && parseInt(process.env.DIST)
 
+meta = process.env.META? && parseInt(process.env.META)
+
 # Configuration
 app.configure ->
   app.use (req, res, next) ->
@@ -39,6 +41,14 @@ app.configure ->
     else
       res.setHeader('Cache-Control', 'public, max-age=0, no-cache');
     next()
+
+  if meta
+    metadataService = require('metadata-service');
+    metadataService.configure(app, {
+      route: '/metadata',
+      protocol: 'sqlite',
+      file: 'metadata.MDF'
+    });
 
   app.use app.router
   app.engine "html", require("ejs").renderFile
