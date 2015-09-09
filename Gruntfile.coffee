@@ -22,25 +22,53 @@ module.exports = (grunt) ->
 
     preprocess:
       html:
-        options: {
-          context : {
+        options:
+          context:
             PRODUCTION: true
             BETA: false
-          }
-        },
         expand: true
         src: ['build/index.html']
         dest: ''
+
       beta:
-        options: {
-          context : {
+        options:
+          context :
             PRODUCTION: true
             BETA: true
-          }
-        },
         expand: true
         src: ['build/admin.html', 'build/index-beta.html']
         dest: ''
+
+      dev:
+        options:
+          context :
+            DEV: true
+            STAGING: false
+            ALPHA: false
+        expand: true
+        src: ['dist/index.html', 'dist/index-beta.html']
+        dest: ''
+
+      staging:
+        options:
+          context :
+            DEV: false
+            STAGING: true
+            ALPHA: false
+        expand: true
+        src: ['dist/index.html', 'dist/index-beta.html']
+        dest: ''
+
+      alpha:
+        options:
+          context :
+            DEV: false
+            STAGING: false
+            ALPHA: true
+        expand: true
+        src: ['dist/index.html', 'dist/index-beta.html']
+        dest: ''
+
 
     concat:
       options:
@@ -485,7 +513,8 @@ module.exports = (grunt) ->
     "concat_css:app"
     "jade"
     "copy:beta_index"
-    "preprocess"
+    "preprocess:html"
+    "preprocess:beta"
     "copy:main"
     "copy:beta"
     "dist_beta" # We don't check beta dependencies against a whitelist
@@ -514,6 +543,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask "deploy_static_to_dev", [
     "dist"
+    "preprocess:dev"
     "shell:deploy_static_to_dev"
     "shell:deploy_start_dev"
   ]
@@ -538,6 +568,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask "deploy_static_to_staging", [
     "dist"
+    "preprocess:staging"
     "shell:deploy_static_to_staging"
     "shell:deploy_start_staging"
   ]
@@ -562,6 +593,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask "deploy_static_to_alpha", [
     "dist"
+    "preprocess:alpha"
     "shell:deploy_static_to_alpha"
     "shell:deploy_start_alpha"
   ]

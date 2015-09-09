@@ -25,16 +25,21 @@ port = process.env.PORT or 8080
 
 dist = process.env.DIST? && parseInt(process.env.DIST)
 
+renderRoot = (response) ->
+  # Inline style hashes, in case we want to remove unsafe-inline:
+  # 'sha256-vv5i1tRAGZ/gOQeRpI3CEWtvnCpu5FCixlD2ZPu7h84=' : angular-charts
+  # 'sha256-47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU=' : angular-charts
+  # lots... : jQuery
+  response.setHeader "content-security-policy", "img-src 'self' data:; style-src 'self' 'unsafe-inline'; child-src 'none'; script-src 'self' 'sha256-mBeSvdVuQxRa2pGoL8lzKX14b2vKgssqQoW36iRlU9g=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='; connect-src 'self' *.blockchain.info *.blockchain.com wss://*.blockchain.info https://blockchain.info https://api.sharedcoin.com; object-src 'none'; media-src 'self' data: mediastream: blob:; font-src 'self'"
+  response.setHeader "X-Frame-Options", "SAMEORIGIN"
+  if dist
+    response.render "index.html", { root: __dirname }
+  else
+    response.render "app/index.jade", { root: __dirname }
+
 # Configuration
 app.configure ->
   app.use (req, res, next) ->
-    if req.url == "/"
-      # Inline style hashes, in case we want to remove unsafe-inline:
-      # 'sha256-vv5i1tRAGZ/gOQeRpI3CEWtvnCpu5FCixlD2ZPu7h84=' : angular-charts
-      # 'sha256-47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU=' : angular-charts
-      # lots... : jQuery
-      res.setHeader "content-security-policy", "img-src 'self' data:; style-src 'self' 'unsafe-inline'; child-src 'none'; script-src 'self' 'sha256-mBeSvdVuQxRa2pGoL8lzKX14b2vKgssqQoW36iRlU9g=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='; connect-src 'self' *.blockchain.info *.blockchain.com wss://*.blockchain.info https://blockchain.info https://api.sharedcoin.com; object-src 'none'; media-src 'self' data: mediastream: blob:; font-src 'self'"
-      res.setHeader "X-Frame-Options", "SAMEORIGIN"
     if req.url.indexOf("beta_key")
       # Don't cache these
       res.setHeader('Cache-Control', 'public, max-age=0, no-cache');
@@ -66,6 +71,56 @@ app.configure ->
 
   return
 
+# /verify-email?token=$token sends a request to blockchain.info and redirects to login
+app.get "/verify-email", (request, response) ->
+  r.get 'https://blockchain.info/wallet' + request.originalUrl
+  response.cookie 'email-verified', true
+  response.redirect '/'
+
+# /authorize-approve?token=$token sends a request to blockchain.info and redirects to login
+app.get "/authorize-approve", (request, response) ->
+  response.send """
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Verifying authorization request</title>
+    <script>
+      var xmlHttp = new XMLHttpRequest();
+      // The redirect should be done in the callback, but currently the callback doesn't get called because the authorize-approve page makes an ajax request to /wallet over http which is blocked
+      // xmlHttp.onload = function () {
+      //   window.location.replace("/");
+      // };
+      xmlHttp.open("GET", "https://blockchain.info/wallet#{request.originalUrl}", true);
+      xmlHttp.send();
+
+      setTimeout(function() { window.location.replace("/"); }, 500);
+    </script>
+  </head>
+</html>
+"""
+# pass the feedback post to jira
+app.post "/feedback", (request, response) ->
+  jira = 'https://blockchain.atlassian.net/rest/collectors/1.0/template/feedback/e6ce4d72'
+  headers = { 'X-Atlassian-Token' : 'nocheck' }
+  r.post { url: jira, headers: headers, form: request.body }, (err, httpResponse, body) ->
+    response.json { success: !(err?) }
+
+# /unsubscribe?token=$token sends a request to blockchain.info and redirects to login
+app.get "/unsubscribe", (request, response) ->
+  r.get 'https://blockchain.info/wallet' + request.originalUrl
+  response.redirect '/'
+
+# *.blockchain.info/guid fills in the guid on the login page
+app.get /^\/.{8}-.{4}-.{4}-.{4}-.{12}$/, (request, response) ->
+  response.cookie 'uid', '"' + request.path.split(path.sep)[1] + '"'
+  response.redirect '/'
+
+# *.blockchain.info/key-{key} brings the user to the register page and fills in the key
+app.get /^\/key-.{8}$/, (request, response) ->
+  response.cookie 'key', '"' + request.path.split(path.sep)[1].split('-')[1] + '"'
+  response.redirect '/'
+
 if process.env.BETA? && parseInt(process.env.BETA)
   console.log("Enabling beta invite system")
 
@@ -82,10 +137,8 @@ if process.env.BETA? && parseInt(process.env.BETA)
   app.get "/", (request, response) ->
     if dist && process.env.BETA?
       response.render "index-beta.html"
-    else if dist
-      response.render "index.html"
     else
-      response.render "app/index.jade"
+      renderRoot(response)
 
   app.get "/percent_requested", (request, response) ->
     setHeaderForOrigin request, response, origins
@@ -241,60 +294,12 @@ if process.env.BETA? && parseInt(process.env.BETA)
         response.json { success: Boolean(isNumber) }
 else
   app.get "/", (request, response) ->
-    if dist
-      response.render "index.html"
-    else
-      response.render "app/index.jade"
+    renderRoot(response)
 
-# /verify-email?token=$token sends a request to blockchain.info and redirects to login
-app.get "/verify-email", (request, response) ->
-  r.get 'https://blockchain.info/wallet' + request.originalUrl
-  response.cookie 'email-verified', true
-  response.redirect '/'
-
-# /authorize-approve?token=$token sends a request to blockchain.info and redirects to login
-app.get "/authorize-approve", (request, response) ->
-  response.send """
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Verifying authorization request</title>
-    <script>
-      var xmlHttp = new XMLHttpRequest();
-      // The redirect should be done in the callback, but currently the callback doesn't get called because the authorize-approve page makes an ajax request to /wallet over http which is blocked
-      // xmlHttp.onload = function () {
-      //   window.location.replace("/");
-      // };
-      xmlHttp.open("GET", "https://blockchain.info/wallet#{request.originalUrl}", true);
-      xmlHttp.send();
-
-      setTimeout(function() { window.location.replace("/"); }, 500);
-    </script>
-  </head>
-</html>
-"""
-# pass the feedback post to jira
-app.post "/feedback", (request, response) ->
-  jira = 'https://blockchain.atlassian.net/rest/collectors/1.0/template/feedback/e6ce4d72'
-  headers = { 'X-Atlassian-Token' : 'nocheck' }
-  r.post { url: jira, headers: headers, form: request.body }, (err, httpResponse, body) ->
-    response.json { success: !(err?) }
-
-# /unsubscribe?token=$token sends a request to blockchain.info and redirects to login
-app.get "/unsubscribe", (request, response) ->
-  r.get 'https://blockchain.info/wallet' + request.originalUrl
-  response.redirect '/'
-
-# *.blockchain.info/guid fills in the guid on the login page
-app.get /^\/.{8}-.{4}-.{4}-.{4}-.{12}$/, (request, response) ->
-  response.cookie 'uid', '"' + request.path.split(path.sep)[1] + '"'
-  response.redirect '/'
-
-# *.blockchain.info/key-{key} brings the user to the register page and fills in the key
-app.get /^\/key-.{8}$/, (request, response) ->
-  response.cookie 'key', '"' + request.path.split(path.sep)[1].split('-')[1] + '"'
-  response.redirect '/'
+# Alternative: some sort of negative regex for img, bower_components, assets and build
+for angularRoute in ["home", "login", "accounts", "settings", "claim", "0", "1", "2", "3","4","5","6","7","8","9", "imported","security-center", "contact-support",  "feedback"]
+  app.get "/" + angularRoute + "*", (request, response, next) ->
+    renderRoot(response)
 
 # TODO Better 404 page
 app.use (req, res) ->

@@ -3,6 +3,16 @@ doctype
 <!-- @if PRODUCTION && !BETA !><html lang='en' ng-app='walletApp' ng-init='beta=0' ng-csp><!-- @endif -->
 <!-- @if PRODUCTION && BETA !><html lang='en' ng-app='walletApp' ng-init='beta=1' ng-csp><!-- @endif -->
 head
+  <!-- @if PRODUCTION !>
+  <!-- @if DEV !><base href='https://dev.blockchain.info/'><!-- @endif -->
+  <!-- @endif -->
+  <!-- @if PRODUCTION !>
+  <!-- @if STAGING !><base href='https://staging.blockchain.info/'><!-- @endif -->
+  <!-- @endif -->
+  <!-- @if PRODUCTION !>
+  <!-- @if ALPHA !><base href='https://alpha.blockchain.info/'><!-- @endif -->
+  <!-- @endif -->
+  <!-- @if !PRODUCTION --><base href="#{ process.env.BASE_URL || 'http://local.blockchain.com:8080/' }"><!-- @endif -->
   meta(charset='utf-8')
   meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1") 
   meta(name="theme-color" content="#187fc0")

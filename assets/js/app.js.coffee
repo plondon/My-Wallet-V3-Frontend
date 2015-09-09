@@ -113,10 +113,12 @@ modules = [
 
 walletApp = angular.module("walletApp", modules)
 
-walletApp.config ($numeraljsConfigProvider, $modalProvider, uiSelectConfig) ->
+walletApp.config ($numeraljsConfigProvider, $modalProvider, uiSelectConfig, $locationProvider) ->
   $numeraljsConfigProvider.setFormat('btc', '0,0.00 BTC')
 
   uiSelectConfig.theme = 'bootstrap'
+
+  $locationProvider.html5Mode(true)
 
 # Danger! Use for debugging only:
 # walletApp.config ($sceProvider) ->
