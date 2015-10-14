@@ -13,27 +13,27 @@ function RecoverFundsCtrl($scope, $rootScope, $state, $timeout, Wallet) {
     bip39phrase: ''
   };
 
-  $scope.performImport = () => {
+  $scope.recover = () => {
     $scope.working = true;
 
-    const success = (wallet) => {
-      $rootScope.beta = false;
-      $scope.working = false;
-      $scope.nextStep();
-      $rootScope.$safeApply();
-
-      const loginSuccess = () => {
-        Wallet.displaySuccess('Successfully recovered wallet!');
-      };
-      const loginError = (err) => {
-        console.error(err);
-      };
-      $timeout(() => {
-        $state.go('login.show');
-        Wallet.login(
-          wallet.guid, wallet.password, null, null, loginSuccess, loginError
-        );
-      }, 4000);
+    const success = (uid) => {
+      
+      const didLoginFinished = () => {
+        $rootScope.beta = false;
+        $scope.working = false;
+        $scope.nextStep();
+        
+        $rootScope.$safeApply();
+      
+        $timeout(() => {
+          $state.go("wallet.common.home");
+          Wallet.displaySuccess('Successfully recovered wallet!');
+        }, 4000);
+        
+      }
+      
+      Wallet.didLogin(uid, didLoginFinished);
+ 
     };
 
     const error = (message) => {
@@ -41,7 +41,7 @@ function RecoverFundsCtrl($scope, $rootScope, $state, $timeout, Wallet) {
       Wallet.displayError(message);
     };
 
-    Wallet.my.recoverFromMnemonic($scope.fields.email, $scope.fields.password, $scope.fields.mnemonic, $scope.fields.bip39phrase, success, error);
+    Wallet.my.recoverResetPasswordAndLogin($scope.fields.mnemonic, "", $scope.fields.email, $scope.fields.password, success, error);
   };
 
   $scope.nextStep = () => {
