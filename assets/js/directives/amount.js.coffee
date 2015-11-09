@@ -3,7 +3,7 @@ angular.module('walletApp').directive('amount', (Wallet) ->
     restrict: "E"
     replace: 'false'
     scope: {
-      transaction: '=transaction'
+      tx: '=transaction'
     }
     templateUrl: 'templates/amount.jade'
     link: (scope, elem, attrs) ->
