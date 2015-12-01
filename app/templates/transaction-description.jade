@@ -4,8 +4,9 @@
       span.timestamp.pbm.type-sm
         date {{::transaction.txTime * 1000 | date:'MMMM d @ hh:mm a'}}
       .flex-center
-        span.action(ng-class="{incoming_tx: transaction.result > 0, outgoing_tx: transaction.result < 0, local_tx: transaction.intraWallet}", translate="{{ action }}")
-        i.ti-notepad.aaa.plm(ng-show="transaction.note")
+        span.action(ng-class="{incoming_tx: transaction.result > 0, outgoing_tx: transaction.result < 0, local_tx: transaction.intraWallet}", translate="{{ action }}").prm
+        i.ti-notepad.aaa(ng-show="transaction.note").prm
+        span.label.label-default(translate="WATCH_ONLY", ng-show="(transaction.result > 0 && transaction.sentToWatchOnly) ||  (transaction.result < 0 && transaction.sentFromWatchOnly) ")
     .hidden-xs.hidden-sm.destination.em-400.col-md-8(ng-class="transaction.toggled ? 'dark-grey' : 'aaa'")
       .flex.row
         span.text.col-md-1(ng-show="transaction.result > 0 && !transaction.intraWallet", translate="FROM:")
