@@ -110,7 +110,7 @@ module.exports = function(karma){
 
     frameworks: ['jasmine'],
 
-    browsers : ['PhantomJS'],
+    browsers : ['Chrome'],
 
     reporters: ['progress','osx', 'coverage'],
 

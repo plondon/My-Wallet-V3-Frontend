@@ -6,7 +6,13 @@ This is the new and improved wallet. You can see it at [alpha.blockchain.info](h
 
 ## Setup
 
-Make sure you have [Node.js](http://nodejs.org/) installed.
+Make sure you have [Node.js](http://nodejs.org/) 5.3.0 or later installed, e.g. via [NVM](http://brewformulas.org/Nvm):
+
+```sh
+brew install nvm
+nvm install 5.3.0
+nvm use 5.3.0
+```
 
 Some NodeJS components need to be installed system wide:
 ```sh
