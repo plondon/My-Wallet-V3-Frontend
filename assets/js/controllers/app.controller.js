@@ -30,7 +30,7 @@ function AppCtrl($scope, Wallet, Alerts, $state, $rootScope, $location, $cookieS
         destination: () => null,
         focus: () => false
       },
-      windowClass: "bc-modal"
+      windowClass: "bc-modal request"
     });
     if (modalInstance != null) {
       modalInstance.opened.then(() => Wallet.store.resetLogoutTimeout());
@@ -48,7 +48,7 @@ function AppCtrl($scope, Wallet, Alerts, $state, $rootScope, $location, $cookieS
           amount: ""
         })
       },
-      windowClass: "bc-modal"
+      windowClass: "bc-modal request"
     });
 
     if (modalInstance != null) {

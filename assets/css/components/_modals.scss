@@ -24,6 +24,9 @@
     transition: transform 0.15s linear;
   }
   &.in .modal-dialog { transform: scale(1) }
+  &.request {
+
+  }
 }
 
 // Shell div to position the modal with bottom padding
@@ -368,6 +371,14 @@
   .bc-modal, .bc-modal.small {
     .modal-dialog {
       width: 60vw;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .bc-modal {
+    &.request { 
+      .modal-dialog { min-width: 560px; }
     }
   }
 }
