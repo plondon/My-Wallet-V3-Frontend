@@ -24,9 +24,6 @@
     transition: transform 0.15s linear;
   }
   &.in .modal-dialog { transform: scale(1) }
-  &.request {
-
-  }
 }
 
 // Shell div to position the modal with bottom padding
