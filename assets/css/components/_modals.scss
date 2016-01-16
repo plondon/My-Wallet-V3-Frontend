@@ -311,7 +311,7 @@
   .ti-lock { font-size: 7.5em; color: #C6C6C6; }
 
   //Specific to the first login modal
-  .rocket-gif {
+  .rocket-gif, .rocket-last-state {
     border-radius: 5px;
     height: 430px;
   }
@@ -328,6 +328,18 @@
       &:last-child {
         padding: 15px 2em;
       }
+    }
+  }
+  .blocket-rocket {
+    @include transition(top 1.9s);
+    position: absolute;
+    display: block;
+    width: 194px;
+    z-index: -1;
+    right: 60px;
+    top: 50px;
+    &.active {
+      top: -500px;
     }
   }
 
