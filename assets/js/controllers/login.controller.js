@@ -12,6 +12,13 @@ function LoginCtrl($scope, $rootScope, $log, $http, Wallet, WalletNetwork, Alert
     twoFactor: null
   };
 
+  const modalInstance = $uibModal.open({
+    templateUrl: "partials/upgrade.jade",
+    controller: "UpgradeCtrl",
+    backdrop: "static",
+    windowClass: "bc-modal"
+  });
+
   $scope.uid = $stateParams.uid || Wallet.guid || $rootScope.loginFormUID;
 
   $scope.uidAvailable = !!$scope.uid

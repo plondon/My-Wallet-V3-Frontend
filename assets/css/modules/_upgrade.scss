@@ -63,18 +63,16 @@
     .carousel-control {
       top: -80px;
       background-image: none;
-      &.left {
-        display: none;
-      }
-      &.right {
-        > span {
-          text-shadow: none;
-          &:before {
-            color: $blue;
-            content: '\e649';
-            font-family: 'ThemifyIcons';
-          }
+      > span {
+        text-shadow: none;
+        &:before {
+          color: $blue;
+          content: '\e649';
+          font-family: 'ThemifyIcons';
         }
+      }
+      &.left span:before {
+        content: '\e64a';
       }
     }
   }
